@@ -60,12 +60,12 @@ $$ -->
 
 <div align="center"><img style="background: white;" src="https://render.githubusercontent.com/render/math?math=l%20%3D%20(1%20-%20%5Clambda)%20*%20l1%20%2B%20%5Clambda%20*%20l2"></div>
 
-Cutmix cuts out some part/box from both images and uses one cutout box as a patch for the other. That seems to work similar to drop-out for neurons - the network has to learn varying features for classification, since some of them are opaqued some of the time. The label of the synthetic image is again a convex combination, where lambda is the ratio of the area of the cutout box to the area of the whole image. We use 
+Cutmix cuts out some part/box from both images and uses one cutout box as a patch for the other. That seems to work similar to drop-out for neurons - the network has to learn varying features for classification, since some of them are opaqued some of the time. The label of the synthetic image is again a convex combination, where \lambda is the ratio of the area of the cutout box to the area of the whole image. We use 
 <!-- $$
-(1- \lambda)
+1-\lambda
 $$ --> 
 
-<div align="left"><img style="background: white;" src="https://render.githubusercontent.com/render/math?math=(1-%20%5Clambda)"></div> 
+<div align="center"><img style="background: white;" src="https://render.githubusercontent.com/render/math?math=1-%5Clambda"></div>
 
 for the image to be patched into, because this image is loosing some of it's original content, and 
 <!-- $$
@@ -91,7 +91,6 @@ $$ -->
 
 ### Extension of the loss function by linearity
 How to use the synthetic labels? What does it help to know, that a picture contains 40% cat and 60% dog (the rare "doggish catdog")? We use labels to calculate the loss, and we can do so by extending the loss function to synthetic labels by linearity. Let
-
 <!-- $$
 \hat y 
 $$ --> 
@@ -106,7 +105,7 @@ $$ -->
 
 <div align="center"><img style="background: white;" src="https://render.githubusercontent.com/render/math?math=loss(l%2C%20%5Chat%20y)%20%3D%20loss((1%20-%20%5Crho_%7B1%7D)%20*%20l1%20%2B%20%5Crho_%7B2%7D%20*%20l2%2C%20%5Chat%20y)%20%3A%3D%20(1%20-%20%5Crho_%7B1%7D)%20*%20loss(l1%2C%20%5Chat%20y)%20%2B%20%5Crho_%7B2%7D%20*%20loss(l2%2C%20%5Chat%20y)%20"></div>
 
-i.e. the loss-function is extended to synthetic labels by linearity. 
+\i.e. the loss-function is extended to synthetic labels by linearity. 
 This requires to have l1 and l2 one-hot encoded such that l is a linear combination of two linearly independend vectors - otherwize the above would not be a well defined construction. For implementation though, one-hot encoding is not necessary, we just calculate the two losses on the right side of the equation.
 
 Another feature introduced in the snapmix paper is asymmetry of the boxes: the boxes are not taken from the same places in the two images, neither do they need to have the same size (as is both the case in the cutmix algorithm). As is shown in the snapmix-paper, asymetry contributes to further increase accuracy.
@@ -128,7 +127,7 @@ $$ -->
 
 <div align="left"><img style="background: white;" src="https://render.githubusercontent.com/render/math?math=y_%7Bi%7D%20%5Ctext%7B-%20the%20label%20for%20the%20i-th%20image%7D%20I_%7Bi%7D"></div>
 
-The channels of the feature-map F are average pooled and feed into a fully connected layer with 5 neurons - one for each possible class.
+\The channels of the feature-map F are average pooled and feed into a fully connected layer with 5 neurons - one for each possible class.
 Let the weight-matrix for this fc-layer be W and the bias vector b. Then for the i-th image I_{i} the input L to the class k will be:
 <!-- $$
 L(i,k) = b_{k} + \sum_{j} W_{k,j} \sum_{x,y} F_{j}(I_{i})(x,y)
@@ -138,7 +137,7 @@ $$ -->
 
 where:
 <!-- $$
-F_{j}(I_{i})(x,y) \text{ is the average over the j-th channel of the feature-map for the image.}
+F_{j}(I_{i})(x,y) \text{ - is the average over the j-th channel of the feature-map for the image.}
 $$ --> 
 
 <div align="center"><img style="background: white;" src="https://render.githubusercontent.com/render/math?math=F_%7Bj%7D(I_%7Bi%7D)(x%2Cy)%20%5Ctext%7B%20is%20the%20average%20over%20the%20j-th%20channel%20of%20the%20feature-map%20for%20the%20image.%7D"></div>
@@ -155,7 +154,7 @@ The contribution to the classification of the image as belonging to it's class y
 L(i,y_{i}) = b_{y_{i}} + \sum_{x,y} M(I_{i})(x,y)
 $$ --> 
 
-<div align="center"><img style="background: white;" src="https://render.githubusercontent.com/render/math?math=L(i%2Cy%7Bi%7D)%20%3D%20b_%7By_%7Bi%7D%7D%20%2B%20%5Csum_%7Bx%2Cy%7D%20M(I_%7Bi%7D)(x%2Cy)"></div>
+<div align="center"><img style="background: white;" src="https://render.githubusercontent.com/render/math?math=L(i%2Cy_%7Bi%7D)%20%3D%20b_%7By_%7Bi%7D%7D%20%2B%20%5Csum_%7Bx%2Cy%7D%20M(I_%7Bi%7D)(x%2Cy)"></div>
 
 where we defined M as:
 <!-- $$
@@ -164,7 +163,7 @@ $$ -->
 
 <div align="center"><img style="background: white;" src="https://render.githubusercontent.com/render/math?math=M(I_%7Bi%7D)(x%2Cy)%20%3A%3D%20%5Csum_%7Bj%7D%20W_%7By_%7Bi%7D%2Cj%7D%20F_%7Bj%7D(I_%7Bi%7D)(x%2Cy)"></div>
 
-**being the contribution of the pixel at (x,y) to the classification of the image as of class y_{i}**
+\ **being the contribution of the pixel at (x,y) to the classification of the image as of class y_{i}**
 
 
 ### The Semantic Percentage Map (SPM)
@@ -175,7 +174,14 @@ $$ -->
 
 <div align="center"><img style="background: white;" src="https://render.githubusercontent.com/render/math?math=S(I_%7Bi%7D)(x%2Cy)%20%3D%20%5Cfrac%7BM(I_%7Bi%7D)(x%2Cy)%7D%7B%5Csum_%7Bx%2Cy%7D%20M(I_%7Bi%7D)(x%2Cy)%7D"></div>
 
-*We have to be cautious here: the coordinates (x,y) designate a pixel in the feature-map, not the original image!* Since we want to cut and patch on the original image, we have to upsample our feature-map. Let this upsampling be done by a function \Phi . We will then call our function S from above the "Semantic Percentage Map (SPM):
+*We have to be cautious here: the coordinates (x,y) designate a pixel in the feature-map, not the original image!* 
+\Since we want to cut and patch on the original image, we have to upsample our feature-map. Let this upsampling be done by a function \Phi . We will then call our function S from above the "Semantic Percentage Map (SPM):
+<!-- $$
+\Phi(M(I_{i}))(x,y) := \sum_{j} W_{y_{i},j} \Phi(F_{j})(I_{i})(x,y)
+$$ --> 
+
+<div align="center"><img style="background: white;" src="https://render.githubusercontent.com/render/math?math=%5CPhi(M(I_%7Bi%7D))(x%2Cy)%20%3A%3D%20%5Csum_%7Bj%7D%20W_%7By_%7Bi%7D%2Cj%7D%20%5CPhi(F_%7Bj%7D)(I_%7Bi%7D)(x%2Cy)"></div>
+
 <!-- $$
 SPM(I_{i})(x,y) = \frac{\Phi(M(I_{i}))(x,y)}{\sum_{x,y} \Phi(M(I_{i}))(x,y)}
 $$ --> 
@@ -207,7 +213,7 @@ $$ -->
 
 <div align="center"><img style="background: white;" src="https://render.githubusercontent.com/render/math?math=l%20%3D%20%5Crho_%7B1%7D%20*%20y_%7B1%7D%20%2B%20%5Crho_%7B2%7D%20*%20y_%7B2%7D"></div> 
 
-The only thing left to do, is to resize the cut out box2 to the size of box1, paste it into image1 and supply it to the training-loop, using the loss function as given above.
+\The only thing left to do, is to resize the cut out box2 to the size of box1, paste it into image1 and supply it to the training-loop, using the loss function as given above.
 
 
 
