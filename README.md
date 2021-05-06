@@ -102,14 +102,16 @@ and let
 \hat y 
 $$ --> 
 
-<div align="center"><img style="background: white;" src="https://render.githubusercontent.com/render/math?math=hat%5Cy%20"></div>
-be the predicted class for the synthetic image. We then define:
+<div align="center"><img style="background: white;" src="https://render.githubusercontent.com/render/math?math=%5Chat%20y%20"></div> 
+
+be the predicted class for the synthetic image. We then define:\\
 
 <!-- $$
-loss(l, \hat y) = loss((1 - \rho_{1}) * l1 + \rho_{2} * l2, \hat y) \\ := (1 - \rho_{1}) * loss(l1, \hat y) + \rho_{2} * loss(l2, \hat y) 
+\newcommand{\eqdef}{=\mathrel{\mathop:}}
+loss(l, \hat y) = loss((1 - \rho_{1}) * l1 + \rho_{2} * l2, \hat y) \eqdef (1 - \rho_{1}) * loss(l1, \hat y) + \rho_{2} * loss(l2, \hat y) 
 $$ --> 
 
-<div align="center"><img style="background: white;" src="https://render.githubusercontent.com/render/math?math=loss(l%2C%20%5Chat%20y)%20%3D%20loss((1%20-%20%5Crho_%7B1%7D)%20*%20l1%20%2B%20%5Crho_%7B2%7D%20*%20l2%2C%20%5Chat%20y)%20%5C%5C%20%3A%3D%20(1%20-%20%5Crho_%7B1%7D)%20*%20loss(l1%2C%20%5Chat%20y)%20%2B%20%5Crho_%7B2%7D%20*%20loss(l2%2C%20%5Chat%20y)%20"></div>
+<div align="center"><img style="background: white;" src="https://render.githubusercontent.com/render/math?math=%5Cnewcommand%7B%5Ceqdef%7D%7B%3D%5Cmathrel%7B%5Cmathop%3A%7D%7D%0Aloss(l%2C%20%5Chat%20y)%20%3D%20loss((1%20-%20%5Crho_%7B1%7D)%20*%20l1%20%2B%20%5Crho_%7B2%7D%20*%20l2%2C%20%5Chat%20y)%20%5Ceqdef%20(1%20-%20%5Crho_%7B1%7D)%20*%20loss(l1%2C%20%5Chat%20y)%20%2B%20%5Crho_%7B2%7D%20*%20loss(l2%2C%20%5Chat%20y)%20"></div> 
 
 i.e. the loss-function is extended to synthetic labels by linearity. 
 This requires to have l1 and l2 one-hot encoded such that l is a linear combination of two linearly independend vectors - otherwize the above would not be a well defined construction. For implementation one-hot encoding is not necessary, we just calculate the two losses on the right side of the equation.
@@ -126,14 +128,6 @@ F(I_{i}) \text{- feature map of the last conv-layer of the back-bone for the i-t
 $$ --> 
 
 <div align="center"><img style="background: white;" src="https://render.githubusercontent.com/render/math?math=F(I_%7Bi%7D)%20%5Ctext%7B-%20feature%20map%20of%20the%20last%20conv-layer%20of%20the%20back-bone%20for%20the%20i-th%20image%7D%20I_%7Bi%7D%20"></div>
-
-clearly then:
-
-<!-- $$
-F(I_{i}) \in \mathbb{R}^{C x H x W}
-$$ --> 
-
-<div align="center"><img style="background: white;" src="https://render.githubusercontent.com/render/math?math=F(I_%7Bi%7D)%20%5Cin%20%5Cmathbb%7BR%7D%5E%7BC%20x%20H%20x%20W%7D"></div>
 
 and let:
 <!-- $$
@@ -160,11 +154,13 @@ $$ -->
 is the average over the j-th channel of the feature-map for the image.
 We can interchange the summations in the formula, because all channels in the feature-map have the same size:
 <!-- $$
+\begin(align)
 L(i,k) = b_{k} + \sum_{j} \sum_{x,y} W_{k,j} F_{j}(I_{i})(x,y) = \\
 = b_{k} + \sum_{x,y} \sum_{j} W_{k,j} F_{j}(I_{i})(x,y)
+\end(align)
 $$ --> 
 
-<div align="center"><img style="background: white;" src="https://render.githubusercontent.com/render/math?math=L(i%2Ck)%20%3D%20b_%7Bk%7D%20%2B%20%5Csum_%7Bj%7D%20%5Csum_%7Bx%2Cy%7D%20W_%7Bk%2Cj%7D%20F_%7Bj%7D(I_%7Bi%7D)(x%2Cy)%20%3D%20%5C%5C%0A%3D%20b_%7Bk%7D%20%2B%20%5Csum_%7Bx%2Cy%7D%20%5Csum_%7Bj%7D%20W_%7Bk%2Cj%7D%20F_%7Bj%7D(I_%7Bi%7D)(x%2Cy)"></div> 
+<div align="center"><img style="background: white;" src="https://render.githubusercontent.com/render/math?math=%5Cbegin(align)%0AL(i%2Ck)%20%3D%20b_%7Bk%7D%20%2B%20%5Csum_%7Bj%7D%20%5Csum_%7Bx%2Cy%7D%20W_%7Bk%2Cj%7D%20F_%7Bj%7D(I_%7Bi%7D)(x%2Cy)%20%3D%20%5C%5C%0A%3D%20b_%7Bk%7D%20%2B%20%5Csum_%7Bx%2Cy%7D%20%5Csum_%7Bj%7D%20W_%7Bk%2Cj%7D%20F_%7Bj%7D(I_%7Bi%7D)(x%2Cy)%0A%5Cend(align)"></div> 
 
 The contribution to the classification of the image as belonging to it's class y_{i} is:
 <!-- $$
@@ -175,7 +171,8 @@ $$ -->
 
 where we defined M as:
 <!-- $$
-M(I_{i})(x,y) = \sum_{j} W_{y_{i},j} F_{j}(I_{i})(x,y)
+\newcommand{\eqdef}{=\mathrel{\mathop:}}
+M(I_{i})(x,y) \eqdef \sum_{j} W_{y_{i},j} F_{j}(I_{i})(x,y)
 $$ --> 
 
 <div align="center"><img style="background: white;" src="https://render.githubusercontent.com/render/math?math=M(I_%7Bi%7D)(x%2Cy)%20%3D%20%5Csum_%7Bj%7D%20W_%7By_%7Bi%7D%2Cj%7D%20F_%7Bj%7D(I_%7Bi%7D)(x%2Cy)"></div>
