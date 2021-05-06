@@ -46,9 +46,11 @@ Fine-grained data are data, where subtle differences decide on the classificatio
 
 Two other mixing algorithms Mixup and Cutmix showed that augmenting images by somehow "mixing" them for training, can improve the accuracy of a network for classification.
 Mixup considers pixel-wize convex combinations of two images, i.e. construct a pixel p in a new synthetic image by setting 
-<!-- $$p = (1 - \lambda) * p1 + \lambda * p2$$ --> 
+<!-- $$
+p = (1 - \lambda) * p1 + \lambda * p2
+$$ --> 
 
-<div align="center"><img style="background: white;" src="https://render.githubusercontent.com/render/math?math="></div>
+<div align="center"><img style="background: white;" src="https://render.githubusercontent.com/render/math?math=p%20%3D%20(1%20-%20%5Clambda)%20*%20p1%20%2B%20%5Clambda%20*%20p2"></div>
 
 for every pixel p1 of image1 and p2 of image2.
 The same transformation is applied to the labels, say: l1, l2, of the images, thus the synthetic label for the constructed image is: 
