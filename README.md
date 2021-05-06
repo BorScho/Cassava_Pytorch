@@ -54,19 +54,25 @@ $$ -->
 
 for every pixel p1 of image1 and p2 of image2.
 The same transformation is applied to the labels, say: l1, l2, of the images, thus the synthetic label for the constructed image is: 
-<!-- $$l = (1 - \lambda) * l1 + \lambda * l2$$ --> 
+<!-- $$
+l = (1 - \lambda) * l1 + \lambda * l2
+$$ --> 
 
-<div align="center"><img style="background: white;" src="https://render.githubusercontent.com/render/math?math="></div>
+<div align="center"><img style="background: white;" src="https://render.githubusercontent.com/render/math?math=l%20%3D%20(1%20-%20%5Clambda)%20*%20l1%20%2B%20%5Clambda%20*%20l2"></div>
 
 Cutmix cuts out some part/box from both images and uses one cutout box as a patch for the other. That seems to work similar to drop-out for neurons - the network has to learn varying features for classification, since some of them are opaqued some of the time. The label of the synthetic image is again a convex combination, where lambda is the ratio of the area of the cutout box to the area of the whole image: 
-* <!-- $$(1- \lambda)$$ --> 
+* <!-- $$
+(1- \lambda)
+$$ --> 
 
-<div align="center"><img style="background: white;" src="svg\klES5izQVx.svg"></div>
+<div align="left"><img style="background: white;" src="https://render.githubusercontent.com/render/math?math=(1-%20%5Clambda)"></div> 
 
 because this image is loosing some of it's original content 
-* <!-- $$\lambda$$ --> 
+* <!-- $$
+\lambda
+$$ --> 
 
-<div align="center"><img style="background: white;" src="svg\n816dGLz36.svg"></div>
+<div align="left"><img style="background: white;" src="https://render.githubusercontent.com/render/math?math=%5Clambda"></div>
 
 for the label of the image from which the patch is taken, because some of it's content is added to the synthetic picture.
 
@@ -75,17 +81,23 @@ The drawback of cutting out and pasting a patch from one image into another migh
 
 ### Reducing label-noise by snapmix
 To mittigate this introduction of label-noise into the training-data, snapmix uses the class activation map (CAM) of every image to determine the percentage of classifying-content of each pixel, i.e. how much each pixel of the image contributes to the classification of the image according to it's label. The "Learning Deep Features..." paper explains the construction of CAMs.
-By knowing the amount of classifying-content in each pixel, called the "semantic percentage" in the snapmix paper, we can then calculate the amount present in the patch taken from image2, say $\rho_{2}$, and the amount present in the area of image1, that will be covered by the patch, say $\rho_{1}$. The synthetic label, l, of the patch-work image will be: <!-- $$l = (1 - \rho_{1}) * l1 + \rho_{2} * l2$$ --> 
+By knowing the amount of classifying-content in each pixel, called the "semantic percentage" in the snapmix paper, we can then calculate the amount present in the patch taken from image2, say \rho_{2}, and the amount present in the area of image1, that will be covered by the patch, say \rho_{1}. The synthetic label, l, of the patch-work image will be: 
+<!-- $$
+l = (1 - \rho_{1}) * l1 + \rho_{2} * l2
+$$ --> 
 
-<div align="center"><img style="background: white;" src="svg\OguqPvfoon.svg"></div>
+<div align="center"><img style="background: white;" src="https://render.githubusercontent.com/render/math?math=l%20%3D%20(1%20-%20%5Crho_%7B1%7D)%20*%20l1%20%2B%20%5Crho_%7B2%7D%20*%20l2"></div>
 
 
 ### Extension of the loss function by linearity
 How to use the synthetic labels? What does it help to know, that a picture contains 40% cat and 60% dog (the rare "doggish catdog")? We use labels to calculate the loss, and we can do so by extending the loss function to synthetic labels by linearity:
 
-<!-- $$\text{Let the synthetic label be:} l = (1 - \rho_{1}) * l1 + \rho_{2} * l2 \text{ and let} hat\y \text{be the predicted class for the synthetic image. We then define:}$$ --> 
+<!-- $$
+\text{Let the synthetic label be:} l = (1 - \rho_{1}) * l1 + \rho_{2} * l2 \text{ and let} hat\y \text{be the predicted class for the synthetic image. We then define:}
+$$ --> 
 
-<div align="center"><img style="background: white;" src="svg\WZrJDS17Go.svg"></div>
+<div align="center"><img style="background: white;" src="https://render.githubusercontent.com/render/math?math=%5Ctext%7BLet%20the%20synthetic%20label%20be%3A%7D%20l%20%3D%20(1%20-%20%5Crho_%7B1%7D)%20*%20l1%20%2B%20%5Crho_%7B2%7D%20*%20l2%20%5Ctext%7B%20and%20let%7D%20hat%5Cy%20%5Ctext%7Bbe%20the%20predicted%20class%20for%20the%20synthetic%20image.%20We%20then%20define%3A%7D"></div> 
+
 
 i.e. the loss-function is extended to synthetic labels by linearity. 
 This requires to have l1 and l2 one-hot encoded such that l is a linear combination of two linearly independend vectors - otherwize the above would not be a well defined construction. For implementation one-hot encoding is not necessary, we just calculate the two losses on the right side of the equation.
@@ -96,18 +108,71 @@ Another feature introduced in the snapmix paper is asymmetry of the boxes: the b
 The class activation map necessary for snapmix is explained in the "Learning Deep Features..." paper mentioned above. It uses the last CNN-feature map of a back-bone network just before average-pooling and the fully-connected classifier. In my implementation the backbone used is an imageNet pretrained ResNet50.
 
 Let:
-<!-- $$F(I_{i}) \text{- feature map of the last conv-layer of the back-bone for the i-th image} I_{i} \text{, i.e. } F(I_{i}) \in \mathbb{R}^{C x H x W}$$ --> 
+<!-- $$
+F(I_{i}) \text{- feature map of the last conv-layer of the back-bone for the i-th image} I_{i} \text{, i.e. } F(I_{i}) \in \mathbb{R}^{C x H x W}
+$$ --> 
 
-<div align="center"><img style="background: white;" src="https://render.githubusercontent.com/render/math?math="></div>
+<div align="center"><img style="background: white;" src="https://render.githubusercontent.com/render/math?math=F(I_%7Bi%7D)%20%5Ctext%7B-%20feature%20map%20of%20the%20last%20conv-layer%20of%20the%20back-bone%20for%20the%20i-th%20image%7D%20I_%7Bi%7D%20%5Ctext%7B%2C%20i.e.%20%7D%20F(I_%7Bi%7D)%20%5Cin%20%5Cmathbb%7BR%7D%5E%7BC%20x%20H%20x%20W%7D"></div>
 
+<!-- $$
+y_{i} \text{- the label for the i-th image} I_{i}
+$$ --> 
 
+<div align="center"><img style="background: white;" src="https://render.githubusercontent.com/render/math?math=y_%7Bi%7D%20%5Ctext%7B-%20the%20label%20for%20the%20i-th%20image%7D%20I_%7Bi%7D"></div>
 
-<!-- $$y_{i} \text{- the label for the i-th image} I_{i}$$ --> 
+The channels of the feature-map F are average pooled and feed into a fully connected layer with 5 neurons and softmax for output.
+Let the weight-matrix for this fc-layer be W and the bias vector b. Then for the i-th image I_{i} the input L to the k-th class will be:
 
-<div align="center"><img style="background: white;" src="svg\3dSDD2MafC.svg"></div>
+<!-- $$
+L(i,k) = b_{k} + \sum_{j} W_{k,j} A_{i,j} \text{, where}
+A_{i,j} = \sum_{x,y} F_{j}(I_{i})(x,y) \text{is the average over the j-th channel of the feature-map for the image}
+$$ --> 
 
+<div align="center"><img style="background: white;" src="https://render.githubusercontent.com/render/math?math=L(i%2Ck)%20%3D%20b_%7Bk%7D%20%2B%20%5Csum_%7Bj%7D%20W_%7Bk%2Cj%7D%20A_%7Bi%2Cj%7D%20%5Ctext%7B%2C%20where%7D%0AA_%7Bi%2Cj%7D%20%3D%20%5Csum_%7Bx%2Cy%7D%20F_%7Bj%7D(I_%7Bi%7D)(x%2Cy)%20%5Ctext%7Bis%20the%20average%20over%20the%20j-th%20channel%20of%20the%20feature-map%20for%20the%20image%7D"></div>
+We can interchange the summations in the formula, because all channels in the feature-map have the same size:
+<!-- $$
+L(i,k) = b_{k} + \sum_{j} W_{k,j} \sum_{x,y} F_{j}(I_{i})(x,y) =
+= b_{k} + \sum_{j} \sum_{x,y} W_{k,j} F_{j}(I_{i})(x,y) =
+= b_{k} + \sum_{x,y} \sum_{j} W_{k,j} F_{j}(I_{i})(x,y)
+$$ --> 
+
+<div align="center"><img style="background: white;" src="https://render.githubusercontent.com/render/math?math=L(i%2Ck)%20%3D%20b_%7Bk%7D%20%2B%20%5Csum_%7Bj%7D%20W_%7Bk%2Cj%7D%20%5Csum_%7Bx%2Cy%7D%20F_%7Bj%7D(I_%7Bi%7D)(x%2Cy)%20%3D%0A%3D%20b_%7Bk%7D%20%2B%20%5Csum_%7Bj%7D%20%5Csum_%7Bx%2Cy%7D%20W_%7Bk%2Cj%7D%20F_%7Bj%7D(I_%7Bi%7D)(x%2Cy)%20%3D%0A%3D%20b_%7Bk%7D%20%2B%20%5Csum_%7Bx%2Cy%7D%20%5Csum_%7Bj%7D%20W_%7Bk%2Cj%7D%20F_%7Bj%7D(I_%7Bi%7D)(x%2Cy)"></div>
+Let the image I_{i} have the label y_{i}, the contribution to the classification of the image as belonging to class y_{i} is:
+
+<!-- $$
+L(i,y{i}) = b_{y_{i}} + \sum_{x,y} \sum_{j} W_{y_{i},j} F_{j}(I_{i})(x,y) =
+= b_{y_{i}} + \sum_{x,y} M(I_{i})(x,y) \text{, where we defined M as:}
+
+M(I_{i})(x,y) = \sum_{j} W_{y_{i},j} F_{j}(I_{i})(x,y) \text{being the contribution of the pixel at (x,y) to the classification of the image as of class} y_{i}
+$$ --> 
+
+<div align="center"><img style="background: white;" src="https://render.githubusercontent.com/render/math?math=L(i%2Cy%7Bi%7D)%20%3D%20b_%7By_%7Bi%7D%7D%20%2B%20%5Csum_%7Bx%2Cy%7D%20%5Csum_%7Bj%7D%20W_%7By_%7Bi%7D%2Cj%7D%20F_%7Bj%7D(I_%7Bi%7D)(x%2Cy)%20%3D%0A%3D%20b_%7By_%7Bi%7D%7D%20%2B%20%5Csum_%7Bx%2Cy%7D%20M(I_%7Bi%7D)(x%2Cy)%20%5Ctext%7B%2C%20where%20we%20defined%20M%20as%3A%7D%0A%0AM(I_%7Bi%7D)(x%2Cy)%20%3D%20%5Csum_%7Bj%7D%20W_%7By_%7Bi%7D%2Cj%7D%20F_%7Bj%7D(I_%7Bi%7D)(x%2Cy)%20%5Ctext%7Bbeing%20the%20contribution%20of%20the%20pixel%20at%20(x%2Cy)%20to%20the%20classification%20of%20the%20image%20as%20of%20class%7D%20y_%7Bi%7D"></div>
 
 ### The Semantic Percentage Map (SPM)
+To get the relative percentage of the contribution of each pixel we normalize M to sum to one:
+<!-- $$
+S(I_{i})(x,y) = \frac{M(I_{i})(x,y)}{\sum_{x,y} M(I_{i})(x,y)}
+$$ --> 
+
+<div align="center"><img style="background: white;" src="https://render.githubusercontent.com/render/math?math=S(I_%7Bi%7D)(x%2Cy)%20%3D%20%5Cfrac%7BM(I_%7Bi%7D)(x%2Cy)%7D%7B%5Csum_%7Bx%2Cy%7D%20M(I_%7Bi%7D)(x%2Cy)%7D"></div>
+We have to be cautious here: the coordinates (x,y) designate a pixel in the feature-map, not the original image I! Since we want to cut and patch on the original image, we have to upsample our feature-map. Let this upsampling be done by a function \Phi. We will then call our function S from above the "Semantic Percentage Map (SPM):
+<!-- $$
+SPM(I_{i})(x,y) = \frac{\Phi(M(I_{i}))(x,y)}{\sum_{x,y} \Phi(M(I_{i}))(x,y)} \text{, where x,y are pixel-coordinates on the original image} I_{i}
+$$ --> 
+
+<div align="center"><img style="background: white;" src="https://render.githubusercontent.com/render/math?math=SPM(I_%7Bi%7D)(x%2Cy)%20%3D%20%5Cfrac%7B%5CPhi(M(I_%7Bi%7D))(x%2Cy)%7D%7B%5Csum_%7Bx%2Cy%7D%20%5CPhi(M(I_%7Bi%7D))(x%2Cy)%7D%20%5Ctext%7B%2C%20where%20x%2Cy%20are%20pixel-coordinates%20on%20the%20original%20image%7D%20I_%7Bi%7D"></div>
+
+
+### Snapmixing
+To apply snapmix we calculate the SPMs of image1 and image2, cut box1 from Image1 and box2 from Image2 and calculate their semantic content to finally get our \rho factors for the synthetic label, l:
+<!-- $$
+\rho_{1} = 1 - \sum_{x,y \in box1} SPM(I_{1})(x,y) \text{and} \rho_{2} = \sum_{x,y \in box2} SPM(I_{2})(x,y)
+\text{and thus our synthetic label is:}
+l = \rho_{1} * y_{1} + \rho_{2} * y_{2}
+$$ --> 
+
+<div align="center"><img style="background: white;" src="https://render.githubusercontent.com/render/math?math=%5Crho_%7B1%7D%20%3D%201%20-%20%5Csum_%7Bx%2Cy%20%5Cin%20box1%7D%20SPM(I_%7B1%7D)(x%2Cy)%20%5Ctext%7Band%7D%20%5Crho_%7B2%7D%20%3D%20%5Csum_%7Bx%2Cy%20%5Cin%20box2%7D%20SPM(I_%7B2%7D)(x%2Cy)%0A%5Ctext%7Band%20thus%20our%20synthetic%20label%20is%3A%7D%0Al%20%3D%20%5Crho_%7B1%7D%20*%20y_%7B1%7D%20%2B%20%5Crho_%7B2%7D%20*%20y_%7B2%7D"></div>
+The only thing left to do is to resize the cut out box2 to the size of box1, paste it into image1 and supply it to the training-loop.
 
 
 
