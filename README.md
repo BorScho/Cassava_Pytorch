@@ -46,10 +46,15 @@ Fine-grained data are data, where subtle differences decide on the classificatio
 
 Two other mixing algorithms Mixup and Cutmix showed that augmenting images by somehow "mixing" them for training, can improve the accuracy of a network for classification.
 Mixup considers pixel-wize convex combinations of two images, i.e. construct a pixel p in a new synthetic image by setting 
-<img src="https://render.githubusercontent.com/render/math?math=%5Cbegin%7Balign*%7D%0Ap%20%3D%20(1-%20%5Clambda)%20*%20p1%20%2B%20%20%5Clambda%20*%20p2%5C%5C%0A%5Cend%7Balign*%7D">
+<!-- $$p = (1 - \lambda) * p1 + \lambda * p2$$ --> 
+
+<div align="center"><img style="background: white;" src="https://render.githubusercontent.com/render/math?math="></div>
+
 for every pixel p1 of image1 and p2 of image2.
 The same transformation is applied to the labels, say: l1, l2, of the images, thus the synthetic label for the constructed image is: 
-<img src="https://render.githubusercontent.com/render/math?math=%5Cbegin%7Balign*%7D%0Al%20%3D%20(1-%20%5Clambda)%20*%20l1%20%2B%20%20%5Clambda%20*%20l2%5C%5C%0A%5Cend%7Balign*%7D">
+<!-- $$l = (1 - \lambda) * l1 + \lambda * l2$$ --> 
+
+<div align="center"><img style="background: white;" src="https://render.githubusercontent.com/render/math?math="></div>
 
 Cutmix cuts out some part/box from both images and uses one cutout box as a patch for the other. That seems to work similar to drop-out for neurons - the network has to learn varying features for classification, since some of them are opaqued some of the time. The label of the synthetic image is again a convex combination, where lambda is the ratio of the area of the cutout box to the area of the whole image: 
 * <!-- $$(1- \lambda)$$ --> 
@@ -89,9 +94,12 @@ Another feature introduced in the snapmix paper is asymmetry of the boxes: the b
 The class activation map necessary for snapmix is explained in the "Learning Deep Features..." paper mentioned above. It uses the last CNN-feature map of a back-bone network just before average-pooling and the fully-connected classifier. In my implementation the backbone used is an imageNet pretrained ResNet50.
 
 Let:
-$$F(I_{i}) \text{- feature map of the last conv-layer of the back-bone for the i-th image} I_{i} \text{, i.e. } F(I_{i}) \in \mathbb{R}^{C x H x W}
+<!-- $$F(I_{i}) \text{- feature map of the last conv-layer of the back-bone for the i-th image} I_{i} \text{, i.e. } F(I_{i}) \in \mathbb{R}^{C x H x W}$$ --> 
 
-<div align="center"><img style="background: white;" src="..\..\..\..\AppData\Local\Programs\Microsoft VS Code\svg\36U1GjrCJs.svg"></div>
+<div align="center"><img style="background: white;" src="https://render.githubusercontent.com/render/math?math="></div>
+
+
+
 <!-- $$y_{i} \text{- the label for the i-th image} I_{i}$$ --> 
 
 <div align="center"><img style="background: white;" src="svg\3dSDD2MafC.svg"></div>
