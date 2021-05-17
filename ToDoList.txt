@@ -1,0 +1,22 @@
+To Do List -- Kaggle Cassava Competition: snapmix in pytorch
+
+Version: 2021.05.17
+
++ the submitted notebook "cassava-pytorch(9).ipynb" reached 76% on the leaderboard - albeit: the algorithm is not a correct implementation of snapmix
++ an improved version "cassava-pytorch(10).ipynb" only reaches 61% on the private training-set - I can remember a snapmix implementation on Kaggle that reached 83%
+anyway: 61% with an implementation that is supposed to be superior cannot be correct. What is more: the accuracy improves very slowly while
+training: 0.8% in 8 epochs (with 5 minutes runtime per epoch): so obviously there has still to be a mistake hidden somewhere.
+
+things to do:
+
++ extract a notebook Resnet50 only version from the code accompanying the snapmix paper. Compare with your own: how it works/ what it achieves
++ implement the localization extraction after the 4th layer mentioned in the paper (in a hint to another paper)
++ I did some experiments with varying alpha for the beta distribution. It is like the paper states: the results are hardly dependent on alpha
++ try different learning rate scheduler-scheme : maybe use "Hyperopt" to do this. Revisit the model.state_dict to store all necessary information.
++ address imbalance in training-set by using weights in the loss functions or other techniques
++ kFolding
+
+further things to do:
++ implement other mixing algorithms for this dataset: cutmix, mixup
++ change the backbone to InceptionV3
++ should be possible to use a variant of kFolding/ unbalanced sampling to counter unbalanced dataset - try!
